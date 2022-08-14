@@ -1,123 +1,254 @@
-import React from 'react';
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
- 
-export default class App extends React.Component {
- 
-  constructor(props) {
-    super(props);
-    this.state = {
+import React,{ FC, Fragment ,useState, useEffect }  from 'react';
+import { Checkbox, FAB } from 'react-native-paper';
+import  Icon  from "react-native-vector-icons/AntDesign";
+import { 
+  StyleSheet, 
+  Text,
+  SafeAreaView,
+  TextInput,
+  TouchableOpacity,
+  View, 
+  FlatList, 
+  Modal,
+  TouchableHighlight
+ } from 'react-native';
+ import todolist from './api/todolist.json';
+
+ type Todo ={
+  id: number;
+  title: string;
+  description: string;
+  done: boolean;
+ }
+
+ type Mode =`list` | `add`;
+
+ const App:FC = () => {
+
+  const [ready, setReady] = useState(false);
+  const getReady = () => {
+    setTodos(todolist);
+    setReady(true);
+  }
+  useEffect(() => {
+    getReady();
+  }, []);
+
+  // モードチェンジ
+  const [mode, setMode] = useState<Mode>('list');
+  const changeMode = (mode: Mode) => {
+    setMode(mode);
+  }
+  const handlePlus = () => {
+    changeMode('add'); // modal表示
+  }
+  const handleCancel = () => {
+    changeMode('list'); // リスト表示
+  }
+
+  // TODO追加
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const addTodo = (todo: Todo) => {
+    setTodos(todos => [...todos, todo]);
+  }
+  
+  const handleAdd = () => {
+    if(!title || !description) return;
+
+    const newTodo: Todo = {
+      id: todos.length === 0 ? 1 : todos[todos.length - 1].id + 1,
+      title,
+      description,
+      done: false
     }
+    addTodo(newTodo);
+    changeMode('list');
   }
- 
-  render() {
-    return (
-      <View style={styles.container}>
-        {/* ボタン1 */}
-        <TouchableHighlight style = {styles.button1} 
-                            onPress= {() => console.log("press1")}
-                            activeOpacity={0.6}
-                            underlayColor="gray"
-        >
-          <Text style = {styles.fontStyle}>button1</Text>
-        </TouchableHighlight>
- 
-        {/* ボタン3 */}
-        <TouchableHighlight style = {styles.button3} 
-                    onPress= {() => console.log("press3")}
-                    activeOpacity={0.6}
-                    underlayColor="lightgray"
-        >
-          <Text style = {[styles.fontStyle, {color: "black"}]}>button3</Text>
-        </TouchableHighlight>
+
+  // TODO入力フォーム初期値
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const resetInput = () => {
+    setTitle('');
+    setDescription('');
+  }
+  useEffect(() => {
+    if(mode === 'list') {
+      resetInput();
+    }
+  }, [mode]);
+
+  // TODO削除
+  const deleteTodo = (id: number) => {
+    // filterメソッド: 配列の値を抽出するメソッド => [応用]選択されたIDが違うものだけを抽出するので同じIDを持つ内容は削除される
+    setTodos(todos => todos.filter(todo => todo.id !== id))
+  }
+  const handleDelete = (id: number) =>{
+    deleteTodo(id);
+  }
+
+  // 描画部分
+  return (
+    <Fragment>
+      <SafeAreaView style={styles.container}>
+        <View>
         
-        {/* ボタン4 */}
-        <TouchableHighlight style = {styles.button4} 
-                    onPress= {() => console.log("press4")}
-                    activeOpacity={0.6}
-                    underlayColor="pink"
-        >
-          <Text style = {styles.fontStyle}>button4</Text>
-        </TouchableHighlight>
- 
- 
-        {/* ボタン7 */}
-        <TouchableHighlight style = {styles.button6}
-                    onPress= {() => console.log("press4")}
-                    activeOpacity={0.6}
-                    underlayColor="lightgray"
-        >
-          <Text style = {[styles.fontStyle, {fontSize: 40}]}>+</Text>
-        </TouchableHighlight>
- 
-      </View>
-    );
-  }
+          {/*<TouchableOpacity onPress={() => handlePlus()}>
+            
+             </TouchableOpacity>*/}
+             <Text style={ styles.plus }>TODO LIST</Text>
+             <FAB
+                
+                icon="plus"
+                style={styles.fab}
+                onPress={() => handlePlus()}
+                /> 
+         </View>
+
+        <View style={styles.todo_wrapper}>
+          <FlatList
+            data={todos}
+            renderItem={({ item: todo }) => {
+              
+              return (
+                <View style={styles.todo_container}>
+                  <Text numberOfLines={2} style={styles.todo_title}>
+                    { todo.title }: { todo.description }
+                  </Text>
+                  <TouchableOpacity onPress={ () => handleDelete(todo.id) }>
+
+                    {/*<Text style={ styles.delete }>Delete</Text>*/}
+
+                    <Icon name="delete" size={30} color='#1f1f1f'/>
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
+            keyExtractor={(_, index) => index.toString()}
+          />
+        </View>
+      </SafeAreaView>
+
+      <Modal visible={ mode === 'add'} animationType={ 'slide' }>
+        <View style={ styles.modal }>
+          <View style={ styles.textinput_frame }>
+            <TextInput
+              placeholder={'Title'}
+              placeholderTextColor={'#bfbfbf'}
+              value={ title }
+              onChangeText={ text => setTitle(text) }
+              style={ styles.textinput }
+            />
+            <TextInput
+              placeholder={'Description'}
+              placeholderTextColor={'#bfbfbf'}
+              value={ description }
+              onChangeText={ text => setDescription(text) }
+              style={ styles.textinput }
+            />
+          </View>
+          <View style={ styles.button }>
+            <TouchableOpacity onPress={() => handleAdd()}>
+              <Text style={ styles.add }>Add</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleCancel()}>
+              <Text style={ styles.cancel }>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    </Fragment>
+  );
+
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginTop: 100
+    backgroundColor: "#fff",
   },
-  button1: {
-    backgroundColor: "black",
+  modal: {
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: "#fff", 
+    height: 400,
+  },
+  todo_wrapper: {
+    marginTop: 25,
+  },
+  todo_container: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 20,
-    width: "40%",
-    alignSelf: "center",
-    marginTop: 50,
+    marginBottom: 1,
+    paddingLeft: 15,
+    backgroundColor: '#f5f5f5',
   },
-  button2: {
-    backgroundColor: "blue",
+  todo_title: {
+    color: '#1f1f1f',
+    width: 300,
+    fontSize: 15,
+    lineHeight: 20,
+    textAlign: 'left',
+  },
+  plus: {
+    fontSize: 25,
+    textAlign: 'center',
+    color: '#4169e1',
+    marginTop: 10,
+    paddingLeft: 15,
+  },
+  add: {
+    fontSize: 15,
+    textAlign: 'center',
+    color: '#fff',
+    width: 250,
+    marginTop: 20,
+    marginRight: 5,
     padding: 10,
-    width: "40%",
-    alignSelf: "center",
-    marginTop: 50,
+    backgroundColor: '#4169e1',
   },
-  button3: {
-    backgroundColor: "white",
+  cancel: {
+    fontSize: 15,
+    textAlign: 'center',
+    color: '#fff',
+    width: '100%',
+    marginTop: 20,
+    marginLeft: 5,
     padding: 10,
-    width: "40%",
-    alignSelf: "center",
-    marginTop: 50,
-    borderWidth: 1,
-    borderColor: "black",
+    backgroundColor: '#ccc',
   },
-  button4: {
-    backgroundColor: "tomato",
-    padding: 20,
-    width: "40%",
-    alignSelf: "center",
-    marginTop: 50,
-    borderWidth: 1,
-    borderColor: "white",
-    borderRadius: 15,
+  textinput_frame: {
+    width: '100%',
+    marginBottom: 25,
   },
-  button5: {
-    backgroundColor: "black",
-    padding: 20,
-    width: "40%",
-    alignSelf: "center",
-    marginTop: 50,
-  	shadowColor: "black",
-  	shadowOffset: {
-  		height: 4,
-  		width: 4
-  	},
-  	shadowRadius: 5,
-  	shadowOpacity: 0.8,
+  textinput: {
+    color: '#1f1f1f',
+    fontSize: 18,
+    borderColor: '#ccc',
+    borderBottomWidth: 1,
+    padding: 25,
   },
-  button6: {
-    backgroundColor: "lime",
-    padding: 10,
-    width: 70,
-    alignSelf: "center",
-    marginTop: 50,
-    borderWidth: 1,
-    borderColor: "white",
-    borderRadius: 50,
+  button: {
+    flexDirection: 'row',
   },
-  fontStyle: {
-    color: "white",
-    alignSelf: "center",
-    fontSize: 24,
+  delete: {
+    fontSize: 14,
+    padding: 30,
+    color: '#fff',
+    backgroundColor: '#dc143c',
+  },
+  fab: {
+    size: 500,
+    color: '#4169e1',
+    position: 'absolute',
+    marginTop: 676,
+    right: 20
   }
+
 });
+
+export default App;
+
