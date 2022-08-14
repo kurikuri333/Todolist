@@ -1,117 +1,131 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
-import React, {type PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-const Section: React.FC<
-  PropsWithChildren<{
-    title: string;
-  }>
-> = ({children, title}) => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
-
-const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  );
-};
-
+import React from 'react';
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+ 
+export default class App extends React.Component {
+ 
+  constructor(props) {
+    super(props);
+    this.state = {
+    }
+  }
+ 
+  render() {
+    return (
+      <View style={styles.container}>
+        {/* ボタン1 */}
+        <TouchableHighlight style = {styles.button1} 
+                            onPress= {() => console.log("press1")}
+                            activeOpacity={0.6}
+                            underlayColor="gray"
+        >
+          <Text style = {styles.fontStyle}>button1</Text>
+        </TouchableHighlight>
+ 
+        {/* ボタン3 */}
+        <TouchableHighlight style = {styles.button3} 
+                    onPress= {() => console.log("press3")}
+                    activeOpacity={0.6}
+                    underlayColor="lightgray"
+        >
+          <Text style = {[styles.fontStyle, {color: "black"}]}>button3</Text>
+        </TouchableHighlight>
+        
+        {/* ボタン4 */}
+        <TouchableHighlight style = {styles.button4} 
+                    onPress= {() => console.log("press4")}
+                    activeOpacity={0.6}
+                    underlayColor="pink"
+        >
+          <Text style = {styles.fontStyle}>button4</Text>
+        </TouchableHighlight>
+ 
+        {/* ボタン5 */}
+        <TouchableHighlight style = {styles.button5}
+                    onPress= {() => console.log("press4")}
+                    activeOpacity={0.6}
+                    underlayColor="gray"
+        >
+          <Text style = {styles.fontStyle}>button5</Text>
+        </TouchableHighlight>
+ 
+        {/* ボタン6 */}
+        <TouchableHighlight style = {styles.button6}
+                    onPress= {() => console.log("press4")}
+                    activeOpacity={0.6}
+                    underlayColor="lightgray"
+        >
+          <Text style = {[styles.fontStyle, {fontSize: 40}]}>+</Text>
+        </TouchableHighlight>
+ 
+      </View>
+    );
+  }
+}
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  container: {
+    flex: 1,
+    marginTop: 100
   },
-  sectionTitle: {
+  button1: {
+    backgroundColor: "black",
+    padding: 20,
+    width: "40%",
+    alignSelf: "center",
+    marginTop: 50,
+  },
+  button2: {
+    backgroundColor: "blue",
+    padding: 10,
+    width: "40%",
+    alignSelf: "center",
+    marginTop: 50,
+  },
+  button3: {
+    backgroundColor: "white",
+    padding: 10,
+    width: "40%",
+    alignSelf: "center",
+    marginTop: 50,
+    borderWidth: 1,
+    borderColor: "black",
+  },
+  button4: {
+    backgroundColor: "tomato",
+    padding: 20,
+    width: "40%",
+    alignSelf: "center",
+    marginTop: 50,
+    borderWidth: 1,
+    borderColor: "white",
+    borderRadius: 15,
+  },
+  button5: {
+    backgroundColor: "black",
+    padding: 20,
+    width: "40%",
+    alignSelf: "center",
+    marginTop: 50,
+  	shadowColor: "black",
+  	shadowOffset: {
+  		height: 4,
+  		width: 4
+  	},
+  	shadowRadius: 5,
+  	shadowOpacity: 0.8,
+  },
+  button6: {
+    backgroundColor: "lime",
+    padding: 10,
+    width: 70,
+    alignSelf: "center",
+    marginTop: 50,
+    borderWidth: 1,
+    borderColor: "white",
+    borderRadius: 50,
+  },
+  fontStyle: {
+    color: "white",
+    alignSelf: "center",
     fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
+  }
 });
-
-export default App;
