@@ -39,14 +39,6 @@ export default class App extends React.Component {
           <Text style = {styles.fontStyle}>button4</Text>
         </TouchableHighlight>
  
-        {/* ボタン5 */}
-        <TouchableHighlight style = {styles.button5}
-                    onPress= {() => console.log("press4")}
-                    activeOpacity={0.6}
-                    underlayColor="gray"
-        >
-          <Text style = {styles.fontStyle}>button5</Text>
-        </TouchableHighlight>
  
         {/* ボタン7 */}
         <TouchableHighlight style = {styles.button6}
