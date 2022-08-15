@@ -11,11 +11,9 @@ import {
   View, 
   FlatList, 
   Modal,
-    Dimensions,
   TouchableHighlight
  } from 'react-native';
  import todolist from './api/todolist.json';
- 
 
  type Todo ={
   id: number;
@@ -90,7 +88,6 @@ import {
     deleteTodo(id);
   }
   
-
   // 描画部分
   return (
     <Fragment>
@@ -137,9 +134,6 @@ import {
          </View>
       </SafeAreaView>
 
-
-
-
       <Modal visible={ mode === 'add'} animationType={ 'slide' }>
         <View style={ styles.modal }>
           <View style={ styles.textinput_frame }>
@@ -170,7 +164,6 @@ import {
       </Modal>
     </Fragment>
   );
-
 }
 
 const styles = StyleSheet.create({
@@ -261,6 +254,8 @@ const styles = StyleSheet.create({
   fab: {
     color: '#4169e1',
     position: 'absolute',
+    marginTop: 676,
+    right: 20
     
   }
 
