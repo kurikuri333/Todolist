@@ -11,7 +11,7 @@ import {
   View, 
   FlatList, 
   Modal,
-    Dimensions,
+  Dimensions,
   TouchableHighlight
  } from 'react-native';
  import todolist from './api/todolist.json';
@@ -111,9 +111,6 @@ import {
                     { todo.title }: { todo.description }
                   </Text>
                   <TouchableOpacity onPress={ () => handleDelete(todo.id) }>
-
-                    {/*<Text style={ styles.delete }>Delete</Text>*/}
-
                     <Icon name="delete" size={30} color='#1f1f1f'/>
                   </TouchableOpacity>
                 </View>
@@ -123,17 +120,12 @@ import {
           />
         </View>
         </ScrollView>
-        <View style={ styles.fabbox }>
-          {/*<TouchableOpacity onPress={() => handlePlus()}>
-            
-             </TouchableOpacity>*/}
-             
-             <FAB
+        <View style={ styles.fabbox }>   
+          <FAB
             icon={'plus'}
             style={styles.fab}
             onPress={() => handlePlus()}
-            /> 
-             
+            />   
          </View>
       </SafeAreaView>
 
@@ -173,6 +165,8 @@ import {
 
 }
 
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   
   container: {
@@ -261,7 +255,9 @@ const styles = StyleSheet.create({
   fab: {
     color: '#4169e1',
     position: 'absolute',
-    
+    marginTop: windowHeight-110,
+    marginLeft: windowWidth-90,
+
   }
 
 });
