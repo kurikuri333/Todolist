@@ -5,14 +5,17 @@ import {
   StyleSheet, 
   Text,
   SafeAreaView,
+  ScrollView,
   TextInput,
   TouchableOpacity,
   View, 
   FlatList, 
   Modal,
+    Dimensions,
   TouchableHighlight
  } from 'react-native';
  import todolist from './api/todolist.json';
+ 
 
  type Todo ={
   id: number;
@@ -86,25 +89,17 @@ import {
   const handleDelete = (id: number) =>{
     deleteTodo(id);
   }
+  
 
   // 描画部分
   return (
     <Fragment>
       <SafeAreaView style={styles.container}>
         <View>
-        
-          {/*<TouchableOpacity onPress={() => handlePlus()}>
-            
-             </TouchableOpacity>*/}
-             <Text style={ styles.plus }>TODO LIST</Text>
-             <FAB
-                
-                icon="plus"
-                style={styles.fab}
-                onPress={() => handlePlus()}
-                /> 
+            <Text style={ styles.plus }>TODO LIST</Text>
          </View>
 
+        <ScrollView>
         <View style={styles.todo_wrapper}>
           <FlatList
             data={todos}
@@ -127,7 +122,23 @@ import {
             keyExtractor={(_, index) => index.toString()}
           />
         </View>
+        </ScrollView>
+        <View style={ styles.fabbox }>
+          {/*<TouchableOpacity onPress={() => handlePlus()}>
+            
+             </TouchableOpacity>*/}
+             
+             <FAB
+            icon={'plus'}
+            style={styles.fab}
+            onPress={() => handlePlus()}
+            /> 
+             
+         </View>
       </SafeAreaView>
+
+
+
 
       <Modal visible={ mode === 'add'} animationType={ 'slide' }>
         <View style={ styles.modal }>
@@ -163,6 +174,7 @@ import {
 }
 
 const styles = StyleSheet.create({
+  
   container: {
     flex: 1,
     backgroundColor: "#fff",
@@ -238,14 +250,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     padding: 30,
     color: '#fff',
-    backgroundColor: '#dc143c',
+
+  },
+  fabbox: {
+    position: 'absolute',
+    backgroundColor: '#4169e',
+    width: 0,
+    height: 0,
   },
   fab: {
-    size: 500,
     color: '#4169e1',
     position: 'absolute',
-    marginTop: 676,
-    right: 20
+    
   }
 
 });
