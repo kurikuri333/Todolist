@@ -5,13 +5,13 @@ import {
   StyleSheet, 
   Text,
   SafeAreaView,
-  ScrollView,
   TextInput,
   TouchableOpacity,
   View, 
   FlatList, 
   Modal,
   Dimensions,
+  useWindowDimensions,
   TouchableHighlight
  } from 'react-native';
  import todolist from './api/todolist.json';
@@ -28,6 +28,7 @@ import {
 
  const App:FC = () => {
 
+  const { height, width } = useWindowDimensions();
   const [ready, setReady] = useState(false);
   const getReady = () => {
     setTodos(todolist);
@@ -90,23 +91,23 @@ import {
     deleteTodo(id);
   }
   
-
   // 描画部分
   return (
     <Fragment>
       <SafeAreaView style={styles.container}>
+
+      <View style = {styles.todo_wrapper}>
         <View>
             <Text style={ styles.plus }>TODO LIST</Text>
          </View>
 
-        <ScrollView>
-        <View style={styles.todo_wrapper}>
           <FlatList
             data={todos}
             renderItem={({ item: todo }) => {
               
               return (
                 <View style={styles.todo_container}>
+                  
                   <Text numberOfLines={2} style={styles.todo_title}>
                     { todo.title }: { todo.description }
                   </Text>
@@ -118,18 +119,13 @@ import {
             }}
             keyExtractor={(_, index) => index.toString()}
           />
+          
         </View>
-        </ScrollView>
-        <View style={ styles.fabbox }>   
-          <FAB
-            icon={'plus'}
-            style={styles.fab}
-            onPress={() => handlePlus()}
-            />   
-         </View>
-      </SafeAreaView>
-
-
+        <FAB
+          icon={'plus'}
+          style={styles.fab}
+          onPress={() => handlePlus()}
+          />   
 
 
       <Modal visible={ mode === 'add'} animationType={ 'slide' }>
@@ -160,6 +156,7 @@ import {
           </View>
         </View>
       </Modal>
+      </SafeAreaView>
     </Fragment>
   );
 
@@ -167,11 +164,14 @@ import {
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+
+
+
 const styles = StyleSheet.create({
   
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "green",
+    paddingBottom: 100,
   },
   modal: {
     justifyContent: 'center', 
@@ -180,7 +180,8 @@ const styles = StyleSheet.create({
     height: 400,
   },
   todo_wrapper: {
-    marginTop: 25,
+    marginTop: 0,
+    backgroundColor: "red",
   },
   todo_container: {
     flex: 1,
@@ -188,9 +189,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    marginBottom: 1,
+    marginBottom: 3,
     paddingLeft: 15,
     backgroundColor: '#f5f5f5',
+    borderRadius:10,
   },
   todo_title: {
     color: '#1f1f1f',
@@ -246,18 +248,12 @@ const styles = StyleSheet.create({
     color: '#fff',
 
   },
-  fabbox: {
-    position: 'absolute',
-    backgroundColor: '#4169e',
-    width: 0,
-    height: 0,
-  },
   fab: {
     color: '#4169e1',
     position: 'absolute',
     marginTop: windowHeight-110,
     marginLeft: windowWidth-90,
-
+    
   }
 
 });
