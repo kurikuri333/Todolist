@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     marginBottom: 3,
     paddingLeft: 15,
     backgroundColor: '#f5f5f5',
-    borderRadius:10,
+    borderRadius: 10,
   },
   todo_title: {
     color: '#1f1f1f',
@@ -217,6 +217,7 @@ const styles = StyleSheet.create({
     marginRight: 5,
     padding: 10,
     backgroundColor: '#4169e1',
+    borderRadius: 10,
   },
   cancel: {
     fontSize: 15,
@@ -227,6 +228,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     padding: 10,
     backgroundColor: '#ccc',
+    borderRadius: 10,
   },
   textinput_frame: {
     width: '100%',
