@@ -11,7 +11,6 @@ import {
   FlatList, 
   Modal,
   Dimensions,
-  useWindowDimensions,
   TouchableHighlight
  } from 'react-native';
  import todolist from './api/todolist.json';
@@ -22,13 +21,13 @@ import {
   title: string;
   description: string;
   done: boolean;
+  check: boolean;
  }
 
  type Mode =`list` | `add`;
 
  const App:FC = () => {
 
-  const { height, width } = useWindowDimensions();
   const [ready, setReady] = useState(false);
   const getReady = () => {
     setTodos(todolist);
@@ -63,11 +62,14 @@ import {
       id: todos.length === 0 ? 1 : todos[todos.length - 1].id + 1,
       title,
       description,
-      done: false
+      done: false,
+      check: false
     }
     addTodo(newTodo);
     changeMode('list');
   }
+
+
 
   // TODO入力フォーム初期値
   const [title, setTitle] = useState('');
@@ -108,9 +110,10 @@ import {
               return (
                 <View style={styles.todo_container}>
                   
-                  <Text numberOfLines={2} style={styles.todo_title}>
-                    { todo.title }: { todo.description }
+                  <Text numberOfLines={5} style={styles.todo_title}>
+                    { todo.title }{"\n"}{ todo.description }
                   </Text>
+                  
                   <TouchableOpacity onPress={ () => handleDelete(todo.id) }>
                     <Icon name="delete" size={30} color='#1f1f1f'/>
                   </TouchableOpacity>
@@ -182,6 +185,8 @@ const styles = StyleSheet.create({
   todo_wrapper: {
     marginTop: 0,
     backgroundColor: "red",
+    height: windowHeight-30,
+    width: windowWidth,
   },
   todo_container: {
     flex: 1,
@@ -191,15 +196,20 @@ const styles = StyleSheet.create({
     padding: 20,
     marginBottom: 3,
     paddingLeft: 15,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: 'yellow',
     borderRadius: 10,
   },
   todo_title: {
     color: '#1f1f1f',
-    width: 300,
+    width: windowWidth-95,
+    paddingLeft: 5,
+    paddingRight: 5,
     fontSize: 15,
     lineHeight: 20,
     textAlign: 'left',
+  },
+  checkbox: {
+
   },
   plus: {
     fontSize: 25,
