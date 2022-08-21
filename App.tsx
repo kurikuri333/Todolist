@@ -1,6 +1,8 @@
 import React,{ FC, Fragment ,useState, useEffect }  from 'react';
 import { Checkbox, FAB } from 'react-native-paper';
 import  Icon  from "react-native-vector-icons/AntDesign";
+import Storage from 'react-native-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { 
   StyleSheet, 
   Text,
@@ -13,8 +15,22 @@ import {
   Dimensions,
   TouchableHighlight
  } from 'react-native';
- import todolist from './api/todolist.json';
  
+ import todolist from './api/todolist.json';
+
+
+ const storage: Storage = new Storage({
+  // 最大容量
+  size: 1000,
+  // バックエンドにAsyncStorageを使う
+  storageBackend: AsyncStorage,
+  // キャッシュ期限(null=期限なし)
+  defaultExpires: null,
+  // メモリにキャッシュするかどうか
+  enableCache: true,
+});
+
+
 
  type Todo ={
   id: number;
@@ -201,7 +217,7 @@ const styles = StyleSheet.create({
   },
   todo_title: {
     color: '#1f1f1f',
-    width: windowWidth-95,
+    width: windowWidth-90,
     paddingLeft: 5,
     paddingRight: 5,
     fontSize: 15,
