@@ -83,8 +83,36 @@ import {
     }
     addTodo(newTodo);
     changeMode('list');
+
+    storage.save({
+      key: String(todos.length === 0 ? 1 : todos[todos.length - 1].id + 1),
+      data: {
+        id: todos.length === 0 ? 1 : todos[todos.length - 1].id + 1,
+        title,
+        description,
+        done: false,
+        check: false
+      },
+    });
   }
 
+  let date : Date = new Date();
+
+  storage.load({
+    key: String(todos.length === 0 ? 1 : todos[todos.length - 1].id + 1),
+  }).then((data: Date) => {
+    // 読み出したdataをdateに入れる  
+    date = data;
+    // Date型のメソッドを使用
+    //date.getTime();  // --> date.getTime is not a function...
+    
+    // Dateコンストラクタにdataを渡して新しいDateインスタンスを作成
+    date = new Date(data);
+    
+    date.getTime(); // --> こうすることで正常に動作する
+  }).catch((error) => {
+    
+  });
 
 
   // TODO入力フォーム初期値
@@ -107,6 +135,9 @@ import {
   }
   const handleDelete = (id: number) =>{
     deleteTodo(id);
+    storage.remove({
+      key : String(id)
+    });
   }
   
   // 描画部分
@@ -173,6 +204,12 @@ import {
               <Text style={ styles.cancel }>Cancel</Text>
             </TouchableOpacity>
           </View>
+          <View>
+
+
+          </View>
+
+
         </View>
       </Modal>
       </SafeAreaView>
@@ -183,9 +220,6 @@ import {
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
-
-
-
 const styles = StyleSheet.create({
   
   container: {
