@@ -13,11 +13,11 @@ import {
   FlatList, 
   Modal,
   Dimensions,
+  Alert,
   TouchableHighlight
  } from 'react-native';
  
  import todolist from './api/todolist.json';
-
 
  const storage: Storage = new Storage({
   // 最大容量
@@ -29,9 +29,6 @@ import {
   // メモリにキャッシュするかどうか
   enableCache: true,
 });
-
-
-
  type Todo ={
   id: number;
   title: string;
@@ -43,6 +40,30 @@ import {
  type Mode =`list` | `add`;
 
  const App:FC = () => {
+  
+  
+  const [markedDates, setMarkedDates] = useState({});
+  const setStore = async (value) => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('dates', jsonValue)
+    } catch (e) {
+    }
+  }
+
+  const getStore = async () => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('dates');
+      const result = jsonValue != null ? JSON.parse(jsonValue) : {};
+      //returnするのではなくsetMarkedDatesを更新する
+      setMarkedDates(result);
+    } catch(e) {
+    }
+  }
+  useEffect(()=>{
+    getStore()
+  },[])
+
 
   const [ready, setReady] = useState(false);
   const getReady = () => {
@@ -81,9 +102,6 @@ import {
       done: false,
       check: false
     }
-    addTodo(newTodo);
-    changeMode('list');
-
     storage.save({
       key: String(todos.length === 0 ? 1 : todos[todos.length - 1].id + 1),
       data: {
@@ -94,26 +112,10 @@ import {
         check: false
       },
     });
+    console.log(storage)
+    addTodo(newTodo);
+    changeMode('list');
   }
-
-  let date : Date = new Date();
-
-  storage.load({
-    key: String(todos.length === 0 ? 1 : todos[todos.length - 1].id + 1),
-  }).then((data: Date) => {
-    // 読み出したdataをdateに入れる  
-    date = data;
-    // Date型のメソッドを使用
-    //date.getTime();  // --> date.getTime is not a function...
-    
-    // Dateコンストラクタにdataを渡して新しいDateインスタンスを作成
-    date = new Date(data);
-    
-    date.getTime(); // --> こうすることで正常に動作する
-  }).catch((error) => {
-    
-  });
-
 
   // TODO入力フォーム初期値
   const [title, setTitle] = useState('');
@@ -128,6 +130,7 @@ import {
     }
   }, [mode]);
 
+
   // TODO削除
   const deleteTodo = (id: number) => {
     // filterメソッド: 配列の値を抽出するメソッド => [応用]選択されたIDが違うものだけを抽出するので同じIDを持つ内容は削除される
@@ -135,6 +138,7 @@ import {
   }
   const handleDelete = (id: number) =>{
     deleteTodo(id);
+
     storage.remove({
       key : String(id)
     });
@@ -159,6 +163,7 @@ import {
                   
                   <Text numberOfLines={5} style={styles.todo_title}>
                     { todo.title }{"\n"}{ todo.description }
+
                   </Text>
                   
                   <TouchableOpacity onPress={ () => handleDelete(todo.id) }>
@@ -204,12 +209,6 @@ import {
               <Text style={ styles.cancel }>Cancel</Text>
             </TouchableOpacity>
           </View>
-          <View>
-
-
-          </View>
-
-
         </View>
       </Modal>
       </SafeAreaView>
