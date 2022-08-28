@@ -1,5 +1,6 @@
-import React,{ FC, Fragment ,useState, useEffect }  from 'react';
-import { Checkbox, FAB } from 'react-native-paper';
+import React,{ FC, Fragment ,useState, useEffect,Component }  from 'react';
+import { FAB } from 'react-native-paper';
+import CheckboxList from 'rn-checkbox-list';
 import  Icon  from "react-native-vector-icons/AntDesign";
 import Storage from 'react-native-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,8 +17,8 @@ import {
   Alert,
   TouchableHighlight
  } from 'react-native';
+ //import todolist from './api/todolist.json';
  
- import todolist from './api/todolist.json';
 
  const storage: Storage = new Storage({
   // 最大容量
@@ -29,6 +30,7 @@ import {
   // メモリにキャッシュするかどうか
   enableCache: true,
 });
+
  type Todo ={
   id: number;
   title: string;
@@ -39,35 +41,40 @@ import {
 
  type Mode =`list` | `add`;
 
+//  const keyget =() =>{
+//   storage.getAllDataForKey('id').then(ids2 =>{
+//     console.log(ids2);
+//     console.log('テストだよーん');
+
+//       AsyncStorage.getAllKeys().then(allkeys =>{
+//         console.log(...allkeys);
+//         console.log(allkeys.length);
+//         console.log('テストだよーん2');
+//       })
+//   })
+//  }
+
+
+//   const keyget =() =>{
+
+
+//     
+
+  //storageから現在の保存内容を読み込み
+const listall: any[] | ((prevState: Todo[]) => Todo[]) =[];
+AsyncStorage.getAllKeys().then(allkeys =>{
+  
+for (var i = 1; i < allkeys.length ; i++){    
+  storage.load({key: allkeys[i]}).then(data => {
+  listall.push(data);  
+})
+}
+})
+
  const App:FC = () => {
-  
-  
-  const [markedDates, setMarkedDates] = useState({});
-  const setStore = async (value) => {
-    try {
-      const jsonValue = JSON.stringify(value)
-      await AsyncStorage.setItem('dates', jsonValue)
-    } catch (e) {
-    }
-  }
-
-  const getStore = async () => {
-    try {
-      const jsonValue = await AsyncStorage.getItem('dates');
-      const result = jsonValue != null ? JSON.parse(jsonValue) : {};
-      //returnするのではなくsetMarkedDatesを更新する
-      setMarkedDates(result);
-    } catch(e) {
-    }
-  }
-  useEffect(()=>{
-    getStore()
-  },[])
-
-
   const [ready, setReady] = useState(false);
   const getReady = () => {
-    setTodos(todolist);
+    setTodos(listall);
     setReady(true);
   }
   useEffect(() => {
@@ -103,18 +110,18 @@ import {
       check: false
     }
     storage.save({
-      key: String(todos.length === 0 ? 1 : todos[todos.length - 1].id + 1),
+      key: 'key'+String(todos.length === 0 ? 1 : todos[todos.length - 1].id + 1),
       data: {
-        id: todos.length === 0 ? 1 : todos[todos.length - 1].id + 1,
+        id: todos.length === 0 ? 1 : todos[todos.length - 1].id + 1 ,
         title,
         description,
         done: false,
         check: false
       },
     });
-    console.log(storage)
     addTodo(newTodo);
     changeMode('list');
+
   }
 
   // TODO入力フォーム初期値
@@ -140,7 +147,7 @@ import {
     deleteTodo(id);
 
     storage.remove({
-      key : String(id)
+      key : 'key'+String(id)
     });
   }
   
@@ -160,12 +167,10 @@ import {
               
               return (
                 <View style={styles.todo_container}>
-                  
                   <Text numberOfLines={5} style={styles.todo_title}>
                     { todo.title }{"\n"}{ todo.description }
 
                   </Text>
-                  
                   <TouchableOpacity onPress={ () => handleDelete(todo.id) }>
                     <Icon name="delete" size={30} color='#1f1f1f'/>
                   </TouchableOpacity>
