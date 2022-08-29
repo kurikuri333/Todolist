@@ -17,8 +17,6 @@ import {
   Alert,
   TouchableHighlight
  } from 'react-native';
- //import todolist from './api/todolist.json';
- 
 
  const storage: Storage = new Storage({
   // 最大容量
@@ -41,44 +39,38 @@ import {
 
  type Mode =`list` | `add`;
 
-//  const keyget =() =>{
-//   storage.getAllDataForKey('id').then(ids2 =>{
-//     console.log(ids2);
-//     console.log('テストだよーん');
-
-//       AsyncStorage.getAllKeys().then(allkeys =>{
-//         console.log(...allkeys);
-//         console.log(allkeys.length);
-//         console.log('テストだよーん2');
-//       })
-//   })
-//  }
 
 
-//   const keyget =() =>{
 
-
-//     
-
-  //storageから現在の保存内容を読み込み
-const listall: any[] | ((prevState: Todo[]) => Todo[]) =[];
-AsyncStorage.getAllKeys().then(allkeys =>{
-  
-for (var i = 1; i < allkeys.length ; i++){    
-  storage.load({key: allkeys[i]}).then(data => {
-  listall.push(data);  
-})
-}
-})
 
  const App:FC = () => {
+    //storageから現在の保存内容を読み込み
+const listAll: any[] | ((prevState: Todo[]) => Todo[]) =[];
+
+const listLoad = async () => {
+await AsyncStorage.getAllKeys().then(allkeys =>{
+for (var i = 1; i < allkeys.length ; i++){    
+  storage.load({key: allkeys[i]}).then(data => {
+  listAll.push(data);  
+  console.log(listAll)
+})
+}
+console.log('テストだよん1')
+console.log(listAll)
+getReady();
+})
+}
+
+
   const [ready, setReady] = useState(false);
-  const getReady = () => {
-    setTodos(listall);
+  const getReady = async () => {
+    setTodos(listAll);
     setReady(true);
+    console.log('テストだよん2')
   }
-  useEffect(() => {
-    getReady();
+  useEffect (() => {
+    listLoad();
+    // getReady();
   }, []);
 
   // モードチェンジ
@@ -88,6 +80,7 @@ for (var i = 1; i < allkeys.length ; i++){
   }
   const handlePlus = () => {
     changeMode('add'); // modal表示
+    console.log(listAll)
   }
   const handleCancel = () => {
     changeMode('list'); // リスト表示
