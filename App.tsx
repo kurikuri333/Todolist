@@ -35,16 +35,13 @@ import {
   description: string;
   done: boolean;
   check: boolean;
- }
+}
 
- type Mode =`list` | `add`;
+type Mode =`list` | `add`;
 
+const App:FC = () => {
 
-
-
-
- const App:FC = () => {
-    //storageから現在の保存内容を読み込み
+  //storageから現在の保存内容を読み込み
 const listAll: any[] | ((prevState: Todo[]) => Todo[]) =[];
 
 const listLoad = async () => {
@@ -52,8 +49,9 @@ await AsyncStorage.getAllKeys().then(allkeys =>{
 for (var i = 1; i < allkeys.length ; i++){    
   storage.load({key: allkeys[i]}).then(data => {
   listAll.push(data);  
-  console.log(listAll)
+  setTodos(listAll);
 })
+
 }
 console.log('テストだよん1')
 console.log(listAll)
@@ -63,14 +61,15 @@ getReady();
 
 
   const [ready, setReady] = useState(false);
-  const getReady = async () => {
-    setTodos(listAll);
+  const getReady = () => {
+    //setTodos(listAll);
     setReady(true);
     console.log('テストだよん2')
   }
   useEffect (() => {
     listLoad();
-    // getReady();
+    getReady();
+    console.log('テストだよん3')
   }, []);
 
   // モードチェンジ
@@ -80,7 +79,6 @@ getReady();
   }
   const handlePlus = () => {
     changeMode('add'); // modal表示
-    console.log(listAll)
   }
   const handleCancel = () => {
     changeMode('list'); // リスト表示
