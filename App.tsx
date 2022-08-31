@@ -1,5 +1,5 @@
 import React,{ FC, Fragment ,useState, useEffect,Component }  from 'react';
-import { FAB } from 'react-native-paper';
+import { AnimatedFAB, FAB, Checkbox } from 'react-native-paper';
 import CheckboxList from 'rn-checkbox-list';
 import  Icon  from "react-native-vector-icons/AntDesign";
 import Storage from 'react-native-storage';
@@ -53,8 +53,8 @@ for (var i = 1; i < allkeys.length ; i++){
 })
 
 }
-console.log('テストだよん1')
-console.log(listAll)
+// console.log('テストだよん1')
+// console.log(listAll)
 getReady();
 })
 }
@@ -64,12 +64,10 @@ getReady();
   const getReady = () => {
     //setTodos(listAll);
     setReady(true);
-    console.log('テストだよん2')
   }
   useEffect (() => {
     listLoad();
     getReady();
-    console.log('テストだよん3')
   }, []);
 
   // モードチェンジ
@@ -86,6 +84,7 @@ getReady();
 
   // TODO追加
   const [todos, setTodos] = useState<Todo[]>([]);
+  
   const addTodo = (todo: Todo) => {
     setTodos(todos => [...todos, todo]);
   }
@@ -141,6 +140,66 @@ getReady();
       key : 'key'+String(id)
     });
   }
+
+  
+  const [checked, setChecked] = useState(false);
+
+  
+
+  
+
+  const handleCheckbox = (id: number) =>{
+
+     AsyncStorage.getAllKeys().then(allkeys =>{
+      const indexNunber :number =allkeys.indexOf('key'+String(id));
+
+      console.log(indexNunber);
+      console.log(allkeys);
+      console.log(todos[indexNunber-1]);
+
+      todos[indexNunber-1]['check'] = !todos[indexNunber-1]['check'] 
+
+      console.log(todos[indexNunber-1]);
+      console.log(todos);
+
+
+      
+
+      storage.save({
+        key : 'key'+String(id),
+        data: {
+          id: todos[indexNunber-1]['id'],
+          title: todos[indexNunber-1]['title'],
+          description: todos[indexNunber-1]['description'],
+          done: todos[indexNunber-1]['done'],
+          check: !todos[indexNunber-1]['check']
+        },
+        
+        
+      });
+      setTodos(todos);
+     getReady();
+
+     })
+     
+    
+   
+    // console.log(todos.filter(todo => todo.id == id));
+    // console.log(AsyncStorage.getAllKeys().then);
+    // console.log(todos.indexOf(todos.filter(todo => todo.id == id)));
+
+    // setTodos(todos.map((todos, index) => (index === {todos[id-1]} ? 
+      
+      
+    //     {id: todos[id-1]['id'],
+    //     title: todos[id-1]['title'],
+    //     description: todos[id-1]['description'],
+    //     done: todos[id-1]['done'],
+    //     check: !todos[id-1]['check'] 
+    //     } :todos)));
+
+    
+ }
   
   // 描画部分
   return (
@@ -158,6 +217,13 @@ getReady();
               
               return (
                 <View style={styles.todo_container}>
+
+                      <Checkbox
+                            status={ todo.check ? 'checked' : 'unchecked'}
+                            onPress={() => {
+                              handleCheckbox(todo.id);
+                            }}
+                          />
                   <Text numberOfLines={5} style={styles.todo_title}>
                     { todo.title }{"\n"}{ todo.description }
 
