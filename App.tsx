@@ -51,14 +51,9 @@ for (var i = 1; i < allkeys.length ; i++){
   listAll.push(data);  
   setTodos(listAll);
 })
-
 }
-// console.log('テストだよん1')
-// console.log(listAll)
-getReady();
 })
 }
-
 
   const [ready, setReady] = useState(false);
   const getReady = () => {
@@ -144,26 +139,15 @@ getReady();
   
   const [checked, setChecked] = useState(false);
 
-  
+  const handleCheckbox = async (id: number) =>{
 
-  
-
-  const handleCheckbox = (id: number) =>{
-
-     AsyncStorage.getAllKeys().then(allkeys =>{
+    await AsyncStorage.getAllKeys().then(allkeys =>{
       const indexNunber :number =allkeys.indexOf('key'+String(id));
-
-      console.log(indexNunber);
-      console.log(allkeys);
-      console.log(todos[indexNunber-1]);
 
       todos[indexNunber-1]['check'] = !todos[indexNunber-1]['check'] 
 
       console.log(todos[indexNunber-1]);
       console.log(todos);
-
-
-      
 
       storage.save({
         key : 'key'+String(id),
@@ -172,33 +156,17 @@ getReady();
           title: todos[indexNunber-1]['title'],
           description: todos[indexNunber-1]['description'],
           done: todos[indexNunber-1]['done'],
-          check: !todos[indexNunber-1]['check']
+          check: todos[indexNunber-1]['check']
         },
-        
-        
       });
-      setTodos(todos);
-     getReady();
-
+      // console.log(todos);
+      //   storage.load({key: 'key'+String(id)}).then(nyan => {
+      //     console.log(nyan);
+      //   })
+        setTodos(todos);
+        setChecked(todos[indexNunber-1]['check']);
      })
-     
-    
-   
-    // console.log(todos.filter(todo => todo.id == id));
-    // console.log(AsyncStorage.getAllKeys().then);
-    // console.log(todos.indexOf(todos.filter(todo => todo.id == id)));
 
-    // setTodos(todos.map((todos, index) => (index === {todos[id-1]} ? 
-      
-      
-    //     {id: todos[id-1]['id'],
-    //     title: todos[id-1]['title'],
-    //     description: todos[id-1]['description'],
-    //     done: todos[id-1]['done'],
-    //     check: !todos[id-1]['check'] 
-    //     } :todos)));
-
-    
  }
   
   // 描画部分
