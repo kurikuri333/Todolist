@@ -88,7 +88,7 @@ const [ready, setReady] = useState(false);
       check: false
     }
     storage.save({
-      key: ('key'+( '000' +String(todos.length === 0 ? 1 : todos[todos.length - 1].id + 1)).slice( -3 )+':ID'),
+      key: ('key'+( '00000000' +String(todos.length === 0 ? 1 : todos[todos.length - 1].id + 1)).slice( -8 )),
       data: {
         id: todos.length === 0 ? 1 : todos[todos.length - 1].id + 1 ,
         title,
@@ -132,7 +132,7 @@ const [ready, setReady] = useState(false);
   const handleDelete = (id: number) =>{
     deleteTodo(id);
     storage.remove({
-      key : 'key'+( '000' + String(id) ).slice( -3 )+':ID'
+      key : 'key'+( '00000000' + String(id) ).slice( -8 )
     });
   }
 
@@ -140,7 +140,7 @@ const [ready, setReady] = useState(false);
   
   const handleCheckbox = async (id: number) =>{
     await AsyncStorage.getAllKeys().then(allkeys =>{
-      const keyIDs :string = 'key'+( '000' + String(id) ).slice( -3 )+':ID';
+      const keyIDs :string = 'key'+( '00000000' + String(id) ).slice( -8 );
       const indexNunber :number = allkeys.indexOf(keyIDs);
       todos[indexNunber-1]['check'] = !todos[indexNunber-1]['check'] ;
       storage.save({
@@ -165,7 +165,7 @@ const [ready, setReady] = useState(false);
       <SafeAreaView style={styles.container}>
       <View style = {styles.todo_wrapper}>
         <View>
-            <Text style={ styles.plus }>Memo Book</Text>
+            <Text style={ styles.plus }>----- Memo Book -----</Text>
          </View>
           <FlatList
             data={todos}
@@ -195,7 +195,7 @@ const [ready, setReady] = useState(false);
         </View>
         <FAB
           icon = {"fountain-pen-tip"}
-          color = {'white'}
+          color = {'#1f1f1f'}
           style={styles.fab}
           onPress={() => handlePlus()}
           />   
@@ -212,7 +212,7 @@ const [ready, setReady] = useState(false);
           </View>
           <View style={ styles.button }>
             <TouchableOpacity onPress={() => handleAdd()}>
-              <Text style={ styles.add }>Add</Text>
+              <Text style={ styles.add }>+New memo</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleCancel()}>
               <Text style={ styles.cancel }>Cancel</Text>
@@ -231,8 +231,10 @@ const windowHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   
   container: {
-    backgroundColor: "green",
+    backgroundColor: '#0B4C76',
     paddingBottom: 100,
+    height: windowHeight-10,
+    paddingBotum: 10,
   },
   modal: {
     justifyContent: 'center', 
@@ -249,8 +251,8 @@ const styles = StyleSheet.create({
   todo_wrapper: {
     marginTop: 0,
     backgroundColor: '#0B4C76',
-    height: windowHeight-25,
-    width: windowWidth,
+    // height: windowHeight*0.96,
+    // width: windowWidth,
   },
   todo_container: {
     flex: 1,
@@ -285,28 +287,35 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
     paddingLeft: 15,
+    backgroundColor: '#0B4C76',
     
   },
   add: {
-    fontSize: 15,
+    fontSize: 18,
+    fontFamily: 'DancingScript-Bold',
     textAlign: 'center',
     color: '#fff',
     width: 250,
     marginTop: 20,
     marginRight: 5,
     padding: 10,
-    backgroundColor: '#4169e1',
+    backgroundColor: '#0B4C76',
+    borderWidth: 0.7,
+    borderColor: '#ccc',
     borderRadius: 10,
   },
   cancel: {
-    fontSize: 15,
+    fontSize: 18,
+    fontFamily: 'DancingScript-Bold',
     textAlign: 'center',
     color: '#fff',
     width: '100%',
     marginTop: 20,
     marginLeft: 5,
     padding: 10,
-    backgroundColor: '#ccc',
+    backgroundColor: '#0B4C76',
+    borderWidth: 0.7,
+    borderColor: '#ccc',
     borderRadius: 10,
   },
   textinput_frame: {
