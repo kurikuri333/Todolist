@@ -1,6 +1,5 @@
 import React,{ FC, Fragment ,useState, useEffect,Component }  from 'react';
 import { AnimatedFAB, FAB, Checkbox } from 'react-native-paper';
-import CheckboxList from 'rn-checkbox-list';
 import  Icon  from "react-native-vector-icons/AntDesign";
 import Storage from 'react-native-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -20,7 +19,7 @@ import {
 
  const storage: Storage = new Storage({
   // 最大容量
-  size: 1000,
+  size: 9,
   // バックエンドにAsyncStorageを使う
   storageBackend: AsyncStorage,
   // キャッシュ期限(null=期限なし)
@@ -32,32 +31,28 @@ import {
  type Todo ={
   id: number;
   title: string;
-  description: string;
   done: boolean;
   check: boolean;
 }
 
 type Mode =`list` | `add`;
-
 const App:FC = () => {
-
   //storageから現在の保存内容を読み込み
 const listAll: any[] | ((prevState: Todo[]) => Todo[]) =[];
-
 const listLoad = async () => {
-await AsyncStorage.getAllKeys().then(allkeys =>{
-for (var i = 1; i < allkeys.length ; i++){    
-  storage.load({key: allkeys[i]}).then(data => {
-  listAll.push(data);  
-  setTodos(listAll);
-})
-}
+  await AsyncStorage.getAllKeys().then(allkeys =>{
+  for (var i = 1; i < allkeys.length ; i++){    
+    storage.load({key: allkeys[i]}).then(data => {
+    listAll.push(data);  
+    setTodos(listAll);
+    console.log(allkeys)
+  })
+  }
 })
 }
 
-  const [ready, setReady] = useState(false);
+const [ready, setReady] = useState(false);
   const getReady = () => {
-    //setTodos(listAll);
     setReady(true);
   }
   useEffect (() => {
@@ -79,42 +74,36 @@ for (var i = 1; i < allkeys.length ; i++){
 
   // TODO追加
   const [todos, setTodos] = useState<Todo[]>([]);
-  
   const addTodo = (todo: Todo) => {
     setTodos(todos => [...todos, todo]);
   }
   
   const handleAdd = () => {
-    if(!title || !description) return;
-
+    if(!title) return;
+    // || !description
     const newTodo: Todo = {
       id: todos.length === 0 ? 1 : todos[todos.length - 1].id + 1,
       title,
-      description,
       done: false,
       check: false
     }
     storage.save({
-      key: 'key'+String(todos.length === 0 ? 1 : todos[todos.length - 1].id + 1),
+      key: ('key'+( '000' +String(todos.length === 0 ? 1 : todos[todos.length - 1].id + 1)).slice( -3 )+':ID'),
       data: {
         id: todos.length === 0 ? 1 : todos[todos.length - 1].id + 1 ,
         title,
-        description,
         done: false,
         check: false
       },
     });
     addTodo(newTodo);
     changeMode('list');
-
   }
 
   // TODO入力フォーム初期値
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
   const resetInput = () => {
     setTitle('');
-    setDescription('');
   }
   useEffect(() => {
     if(mode === 'list') {
@@ -122,83 +111,81 @@ for (var i = 1; i < allkeys.length ; i++){
     }
   }, [mode]);
 
-
   // TODO削除
+
+  const showAlert = (id: number)=> {
+    Alert.alert(
+      '削除しますか',
+      '',
+      [
+        {text: 'はい', onPress: () => handleDelete(id)},
+        {text: 'いいえ', },
+      ],
+      { cancelable: false }
+    )
+  }
+  
   const deleteTodo = (id: number) => {
-    // filterメソッド: 配列の値を抽出するメソッド => [応用]選択されたIDが違うものだけを抽出するので同じIDを持つ内容は削除される
     setTodos(todos => todos.filter(todo => todo.id !== id))
   }
+
   const handleDelete = (id: number) =>{
     deleteTodo(id);
-
     storage.remove({
-      key : 'key'+String(id)
+      key : 'key'+( '000' + String(id) ).slice( -3 )+':ID'
     });
   }
 
-  
   const [checked, setChecked] = useState(false);
-
+  
   const handleCheckbox = async (id: number) =>{
-
     await AsyncStorage.getAllKeys().then(allkeys =>{
-      const indexNunber :number =allkeys.indexOf('key'+String(id));
-
-      todos[indexNunber-1]['check'] = !todos[indexNunber-1]['check'] 
-
-      console.log(todos[indexNunber-1]);
-      console.log(todos);
-
+      const keyIDs :string = 'key'+( '000' + String(id) ).slice( -3 )+':ID';
+      const indexNunber :number = allkeys.indexOf(keyIDs);
+      todos[indexNunber-1]['check'] = !todos[indexNunber-1]['check'] ;
       storage.save({
-        key : 'key'+String(id),
+        key : keyIDs,
         data: {
           id: todos[indexNunber-1]['id'],
           title: todos[indexNunber-1]['title'],
-          description: todos[indexNunber-1]['description'],
           done: todos[indexNunber-1]['done'],
           check: todos[indexNunber-1]['check']
         },
       });
-      // console.log(todos);
-      //   storage.load({key: 'key'+String(id)}).then(nyan => {
-      //     console.log(nyan);
-      //   })
         setTodos(todos);
-        setChecked(todos[indexNunber-1]['check']);
+        console.log(allkeys);
+        console.log(todos);
+        setChecked(!checked);
      })
-
- }
+  }
   
   // 描画部分
   return (
     <Fragment>
       <SafeAreaView style={styles.container}>
-
       <View style = {styles.todo_wrapper}>
         <View>
-            <Text style={ styles.plus }>TODO LIST</Text>
+            <Text style={ styles.plus }>Memo Book</Text>
          </View>
-
           <FlatList
             data={todos}
             renderItem={({ item: todo }) => {
-              
               return (
                 <View style={styles.todo_container}>
-
                       <Checkbox
-                            status={ todo.check ? 'checked' : 'unchecked'}
-                            onPress={() => {
-                              handleCheckbox(todo.id);
-                            }}
-                          />
+                        uncheckedColor = {'#fff'}
+                        color={'#fff'}
+                        status={ todo.check ? 'checked' : 'unchecked'}
+                        onPress={() => {
+                          handleCheckbox(todo.id);
+                        }}
+                      />
                   <Text numberOfLines={5} style={styles.todo_title}>
-                    { todo.title }{"\n"}{ todo.description }
-
+                    { todo.title }
                   </Text>
-                  <TouchableOpacity onPress={ () => handleDelete(todo.id) }>
-                    <Icon name="delete" size={30} color='#1f1f1f'/>
-                  </TouchableOpacity>
+                   <TouchableOpacity onPress={ () => showAlert(todo.id) }>
+                    <Icon name="delete" size={30} color='white'/>
+                  </TouchableOpacity> 
                 </View>
               );
             }}
@@ -207,27 +194,19 @@ for (var i = 1; i < allkeys.length ; i++){
           
         </View>
         <FAB
-          icon={'plus'}
+          icon = {"fountain-pen-tip"}
+          color = {'white'}
           style={styles.fab}
           onPress={() => handlePlus()}
           />   
-
-
-      <Modal visible={ mode === 'add'} animationType={ 'slide' }>
+      <Modal visible={ mode === 'add'} animationType={ 'slide' } >
         <View style={ styles.modal }>
           <View style={ styles.textinput_frame }>
             <TextInput
-              placeholder={'Title'}
+              placeholder={'memo'}
               placeholderTextColor={'#bfbfbf'}
               value={ title }
               onChangeText={ text => setTitle(text) }
-              style={ styles.textinput }
-            />
-            <TextInput
-              placeholder={'Description'}
-              placeholderTextColor={'#bfbfbf'}
-              value={ description }
-              onChangeText={ text => setDescription(text) }
               style={ styles.textinput }
             />
           </View>
@@ -240,11 +219,11 @@ for (var i = 1; i < allkeys.length ; i++){
             </TouchableOpacity>
           </View>
         </View>
+        <View style={ styles.modalBotum }></View>
       </Modal>
       </SafeAreaView>
     </Fragment>
   );
-
 }
 
 const windowWidth = Dimensions.get('window').width;
@@ -258,13 +237,19 @@ const styles = StyleSheet.create({
   modal: {
     justifyContent: 'center', 
     alignItems: 'center', 
-    backgroundColor: "#fff", 
+    backgroundColor: '#0B4C76', 
     height: 400,
+  },
+  modalBotum: {
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    backgroundColor: '#0B4C76', 
+    height: windowHeight-400,
   },
   todo_wrapper: {
     marginTop: 0,
-    backgroundColor: "red",
-    height: windowHeight-30,
+    backgroundColor: '#0B4C76',
+    height: windowHeight-25,
     width: windowWidth,
   },
   todo_container: {
@@ -273,29 +258,34 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    marginBottom: 3,
-    paddingLeft: 15,
-    backgroundColor: 'yellow',
+    // marginBottom: 0,
+    marginLeft: 5,
+    marginRight: 5,
+    paddingLeft: 5,
+    borderWidth: 0.7,
+    backgroundColor: '#0B4C76',
+    borderColor: "#fff",
     borderRadius: 10,
+    
   },
   todo_title: {
-    color: '#1f1f1f',
+    color: '#FFFFFF',
     width: windowWidth-90,
     paddingLeft: 5,
     paddingRight: 5,
-    fontSize: 15,
+    fontSize: 17,
     lineHeight: 20,
     textAlign: 'left',
   },
-  checkbox: {
-
-  },
   plus: {
     fontSize: 25,
+    fontFamily: 'DancingScript-Bold',
     textAlign: 'center',
-    color: '#4169e1',
+    color: '#fff',
     marginTop: 10,
+    marginBottom: 10,
     paddingLeft: 15,
+    
   },
   add: {
     fontSize: 15,
@@ -324,7 +314,7 @@ const styles = StyleSheet.create({
     marginBottom: 25,
   },
   textinput: {
-    color: '#1f1f1f',
+    color: '#fff',
     fontSize: 18,
     borderColor: '#ccc',
     borderBottomWidth: 1,
