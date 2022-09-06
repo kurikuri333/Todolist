@@ -1,6 +1,7 @@
 import React,{ FC, Fragment ,useState, useEffect,Component }  from 'react';
 import { AnimatedFAB, FAB, Checkbox } from 'react-native-paper';
 import  Icon  from "react-native-vector-icons/AntDesign";
+import  Icon2  from "react-native-vector-icons/FontAwesome5";
 import Storage from 'react-native-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { 
@@ -137,7 +138,6 @@ const [ready, setReady] = useState(false);
   }
 
   const [checked, setChecked] = useState(false);
-  
   const handleCheckbox = async (id: number) =>{
     await AsyncStorage.getAllKeys().then(allkeys =>{
       const keyIDs :string = 'key'+( '00000000' + String(id) ).slice( -8 );
@@ -165,13 +165,13 @@ const [ready, setReady] = useState(false);
       <SafeAreaView style={styles.container}>
       <View style = {styles.todo_wrapper}>
         <View>
-            <Text style={ styles.plus }>----- Memo Book -----</Text>
-         </View>
+          <Text style={ styles.titleBox }>----- Memo Book -----</Text>
+        </View>
           <FlatList
             data={todos}
             renderItem={({ item: todo }) => {
               return (
-                <View style={styles.todo_container}>
+                <View style={todo.check ? styles.todo_container_Push :styles.todo_container}>
                       <Checkbox
                         uncheckedColor = {'#fff'}
                         color={'#fff'}
@@ -191,14 +191,24 @@ const [ready, setReady] = useState(false);
             }}
             keyExtractor={(_, index) => index.toString()}
           />
-          
+          <TouchableOpacity onPress={ () => handlePlus() }>
+          <View>
+            <Text style={ styles.plus }>
+              <Icon2 name="pen-nib" size={20} color='#1f1f1f'/>  New Memo</Text>
+            
+
+         </View>
+         </TouchableOpacity> 
         </View>
-        <FAB
+
+        
+        {/* <FAB
           icon = {"fountain-pen-tip"}
           color = {'#1f1f1f'}
           style={styles.fab}
           onPress={() => handlePlus()}
-          />   
+          />  */}
+
       <Modal visible={ mode === 'add'} animationType={ 'slide' } >
         <View style={ styles.modal }>
           <View style={ styles.textinput_frame }>
@@ -212,7 +222,7 @@ const [ready, setReady] = useState(false);
           </View>
           <View style={ styles.button }>
             <TouchableOpacity onPress={() => handleAdd()}>
-              <Text style={ styles.add }>+New memo</Text>
+              <Text style={ styles.add }>+New Memo</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleCancel()}>
               <Text style={ styles.cancel }>Cancel</Text>
@@ -232,9 +242,8 @@ const styles = StyleSheet.create({
   
   container: {
     backgroundColor: '#0B4C76',
-    paddingBottom: 100,
-    height: windowHeight-10,
-    paddingBotum: 10,
+    paddingBottom: 0,
+    height: windowHeight,
   },
   modal: {
     justifyContent: 'center', 
@@ -249,9 +258,9 @@ const styles = StyleSheet.create({
     height: windowHeight-400,
   },
   todo_wrapper: {
-    marginTop: 0,
+    paddingBottom: windowHeight*0.03,
     backgroundColor: '#0B4C76',
-    // height: windowHeight*0.96,
+    height: windowHeight,
     // width: windowWidth,
   },
   todo_container: {
@@ -260,15 +269,27 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 20,
-    // marginBottom: 0,
     marginLeft: 5,
     marginRight: 5,
     paddingLeft: 5,
     borderWidth: 0.7,
     backgroundColor: '#0B4C76',
     borderColor: "#fff",
-    borderRadius: 10,
-    
+    borderRadius: 10,    
+  },
+  todo_container_Push: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 20,
+    marginLeft: 5,
+    marginRight: 5,
+    paddingLeft: 5,
+    borderWidth: 0.7,
+    backgroundColor: '#b33e5c',
+    borderColor: "#fff",
+    borderRadius: 10,    
   },
   todo_title: {
     color: '#FFFFFF',
@@ -279,27 +300,48 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     textAlign: 'left',
   },
-  plus: {
+
+  titleBox: {
     fontSize: 25,
     fontFamily: 'DancingScript-Bold',
     textAlign: 'center',
     color: '#fff',
-    marginTop: 10,
-    marginBottom: 10,
-    paddingLeft: 15,
+    padding: 10,
     backgroundColor: '#0B4C76',
+    borderColor: "#fff",
+    marginLeft: 5,
+    marginRight: 5,
+    borderWidth: 0.7,
+    borderRadius: 10,
+    
+  },
+
+  plus: {
+    fontSize: 25,
+    fontFamily: 'DancingScript-Bold',
+    textAlign: 'center',
+    color: '#1f1f1f',
+    padding: 10,
+    // marginTop: 10,
+    // marginBottom: 10,
+    backgroundColor: '#fff',
+    borderColor: "#fff",
+    marginLeft: 5,
+    marginRight: 5,
+    borderWidth: 0.7,
+    borderRadius: 10,
     
   },
   add: {
     fontSize: 18,
     fontFamily: 'DancingScript-Bold',
     textAlign: 'center',
-    color: '#fff',
+    color: '#1f1f1f',
     width: 250,
     marginTop: 20,
     marginRight: 5,
     padding: 10,
-    backgroundColor: '#0B4C76',
+    backgroundColor: '#fff',
     borderWidth: 0.7,
     borderColor: '#ccc',
     borderRadius: 10,
@@ -339,7 +381,7 @@ const styles = StyleSheet.create({
 
   },
   fab: {
-    color: '#4169e1',
+    backgroundColor: '#fff',
     position: 'absolute',
     marginTop: windowHeight-110,
     marginLeft: windowWidth-90,
