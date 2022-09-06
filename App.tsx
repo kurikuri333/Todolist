@@ -15,12 +15,11 @@ import {
   Modal,
   Dimensions,
   Alert,
-  TouchableHighlight
  } from 'react-native';
 
  const storage: Storage = new Storage({
   // 最大容量
-  size: 9,
+  size: 1000,
   // バックエンドにAsyncStorageを使う
   storageBackend: AsyncStorage,
   // キャッシュ期限(null=期限なし)
@@ -46,7 +45,7 @@ const listLoad = async () => {
     storage.load({key: allkeys[i]}).then(data => {
     listAll.push(data);  
     setTodos(listAll);
-    console.log(allkeys)
+    // console.log(allkeys)
   })
   }
 })
@@ -152,8 +151,8 @@ const [ready, setReady] = useState(false);
         },
       });
         setTodos(todos);
-        console.log(allkeys);
-        console.log(todos);
+        // console.log(allkeys);
+        // console.log(todos);
         setChecked(!checked);
      })
   }
@@ -191,13 +190,11 @@ const [ready, setReady] = useState(false);
             keyExtractor={(_, index) => index.toString()}
           />
           <TouchableOpacity onPress={ () => handlePlus() }>
-          <View>
-            <Text style={ styles.plus }>
-              <Icon2 name="pen-nib" size={20} color='#1f1f1f'/>  New Memo</Text>
-            
-
-         </View>
-         </TouchableOpacity> 
+            <View>
+              <Text style={ styles.plus }>
+                <Icon2 name="pen-nib" size={20} color='#1f1f1f'/>  New Memo</Text>
+            </View>
+          </TouchableOpacity> 
         </View>
 
         
