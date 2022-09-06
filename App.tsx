@@ -1,5 +1,5 @@
 import React,{ FC, Fragment ,useState, useEffect,Component }  from 'react';
-import { AnimatedFAB, FAB, Checkbox } from 'react-native-paper';
+import { Checkbox } from 'react-native-paper';
 import  Icon  from "react-native-vector-icons/AntDesign";
 import  Icon2  from "react-native-vector-icons/FontAwesome5";
 import Storage from 'react-native-storage';
@@ -113,7 +113,6 @@ const [ready, setReady] = useState(false);
   }, [mode]);
 
   // TODO削除
-
   const showAlert = (id: number)=> {
     Alert.alert(
       '削除しますか',
@@ -165,7 +164,7 @@ const [ready, setReady] = useState(false);
       <SafeAreaView style={styles.container}>
       <View style = {styles.todo_wrapper}>
         <View>
-          <Text style={ styles.titleBox }>----- Memo Book -----</Text>
+          {/* <Text style={ styles.titleBox }>----- Memo ist -----</Text> */}
         </View>
           <FlatList
             data={todos}
@@ -258,6 +257,7 @@ const styles = StyleSheet.create({
     height: windowHeight-400,
   },
   todo_wrapper: {
+    marginTop:5,
     paddingBottom: windowHeight*0.03,
     backgroundColor: '#0B4C76',
     height: windowHeight,
