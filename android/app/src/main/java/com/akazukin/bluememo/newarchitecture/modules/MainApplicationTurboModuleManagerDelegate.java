@@ -1,4 +1,4 @@
-package com.todolist.newarchitecture.modules;
+package com.akazukin.bluememo.newarchitecture.modules;
 
 import com.facebook.jni.HybridData;
 import com.facebook.react.ReactPackage;

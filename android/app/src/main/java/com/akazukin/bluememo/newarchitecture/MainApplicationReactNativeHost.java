@@ -1,4 +1,4 @@
-package com.todolist.newarchitecture;
+package com.akazukin.bluememo.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.todolist.BuildConfig;
-import com.todolist.newarchitecture.components.MainComponentsRegistry;
-import com.todolist.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.akazukin.bluememo.BuildConfig;
+import com.akazukin.bluememo.newarchitecture.components.MainComponentsRegistry;
+import com.akazukin.bluememo.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 
